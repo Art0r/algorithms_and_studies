@@ -2,7 +2,6 @@ package main
 
 import (
 	"container/heap"
-	"fmt"
 	"math"
 )
 
@@ -25,7 +24,9 @@ var graphs = [2]map[string]map[string]uint64{
 }
 
 type Item struct {
-	value    string
+	// 'name' of the node in this case
+	value string
+	// weight of the node in this case
 	priority uint64
 	index    int
 }
@@ -49,7 +50,7 @@ func (pq PriorityQueue) Less(i, j int) bool {
 		return true
 	}
 
-	return pq[i].priority > pq[j].priority
+	return pq[i].priority < pq[j].priority
 }
 
 func (pq PriorityQueue) Swap(i, j int) {
@@ -58,11 +59,11 @@ func (pq PriorityQueue) Swap(i, j int) {
 	pq[j].index = j
 }
 
-func (pq *PriorityQueue) Push(x any) {
+func (pq *PriorityQueue) Push(node any) {
 	n := len(*pq)
-	item := x.(Item)
+	item := node.(Item)
 	item.index = n
-	*pq = append(*pq, item)
+	*pq = append(*pq, &item)
 }
 
 func (pq *PriorityQueue) Pop() any {
@@ -103,17 +104,16 @@ func dijkstra(graph map[string]map[string]uint64, start string) {
 	 */
 	costs[start] = 0
 
-	var pq PriorityQueue = make(PriorityQueue, len(graph))
+	var pq PriorityQueue = make(PriorityQueue, 0)
 	heap.Init(&pq)
 	heap.Push(&pq, Item{
 		value:    start,
 		priority: 0,
-		index:    0,
 	})
 
-	fmt.Println(pq)
-	fmt.Println(costs)
-	fmt.Println(parents)
+	for pq.Len() > 0 {
+		print(pq.Pop())
+	}
 }
 
 func main() {
